@@ -1,0 +1,24 @@
+// Prisma schema for PostgreSQL database
+// This is a placeholder schema - expand as features are developed
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model - placeholder for auth system
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Add relations here as features are developed
+  // Example: posts Post[]
+}
+
