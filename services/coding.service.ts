@@ -2,9 +2,9 @@
  * Coding Practice Service
  * 
  * Static data provider for coding practice module.
- * Contains language information, syntax basics, examples, and practice exercises.
+ * Contains language definitions, syntax examples, and practice exercises.
  * 
- * Architecture: Frontend-only, no backend calls
+ * Architecture: Frontend-only, no database or API calls.
  */
 
 export type LanguageId =
@@ -23,9 +23,18 @@ export interface Language {
   description: string
   introduction: string
   useCases: string[]
+  syntax: SyntaxSection[]
+  examples: CodeExample[]
+  practices: PracticeExercise[]
 }
 
-export interface SyntaxExample {
+export interface SyntaxSection {
+  title: string
+  description: string
+  code: string
+}
+
+export interface CodeExample {
   title: string
   description: string
   code: string
@@ -37,165 +46,30 @@ export interface PracticeExercise {
   description: string
   incompleteCode: string
   placeholder: string
-  expectedAnswer: string
-  hint?: string
-}
-
-export interface LanguageContent {
-  language: Language
-  syntaxBasics: SyntaxExample[]
-  codeExamples: SyntaxExample[]
-  practiceExercises: PracticeExercise[]
+  expectedOutput: string
+  solution: string
 }
 
 /**
- * Supported languages metadata
+ * Language data - structured for easy expansion
  */
-export const languages: Language[] = [
-  {
+const languagesData: Record<LanguageId, Language> = {
+  c: {
     id: "c",
     name: "C",
-    description: "A foundational programming language used for system programming and embedded systems",
+    description: "A general-purpose programming language, foundational for system programming",
     introduction:
-      "C is a powerful, general-purpose programming language developed in the 1970s. It's the foundation for many modern languages and is widely used in system programming, operating systems, and embedded systems.",
+      "C is a powerful, low-level programming language developed in the 1970s. It's widely used for system programming, embedded systems, and building operating systems. Learning C helps you understand how computers work at a fundamental level.",
     useCases: [
       "System programming",
-      "Operating systems",
       "Embedded systems",
+      "Operating systems",
       "Game development",
     ],
-  },
-  {
-    id: "cpp",
-    name: "C++",
-    description: "An extension of C with object-oriented features, used for high-performance applications",
-    introduction:
-      "C++ is an extension of C that adds object-oriented programming features. It's used for building high-performance applications, game engines, and system software.",
-    useCases: [
-      "Game development",
-      "High-performance applications",
-      "System software",
-      "Desktop applications",
-    ],
-  },
-  {
-    id: "python",
-    name: "Python",
-    description: "A beginner-friendly language known for its simplicity and versatility",
-    introduction:
-      "Python is a high-level, interpreted programming language known for its clear syntax and readability. It's widely used in web development, data science, artificial intelligence, and automation.",
-    useCases: [
-      "Web development",
-      "Data science",
-      "Artificial intelligence",
-      "Automation scripts",
-    ],
-  },
-  {
-    id: "java",
-    name: "Java",
-    description: "A platform-independent language used for enterprise applications and Android development",
-    introduction:
-      "Java is a class-based, object-oriented programming language designed to have as few implementation dependencies as possible. It's used for building enterprise applications, Android apps, and large-scale systems.",
-    useCases: [
-      "Enterprise applications",
-      "Android development",
-      "Web applications",
-      "Big data processing",
-    ],
-  },
-  {
-    id: "javascript",
-    name: "JavaScript",
-    description: "The language of the web, used for interactive websites and web applications",
-    introduction:
-      "JavaScript is a versatile programming language that runs in web browsers and on servers. It's essential for creating interactive websites and modern web applications.",
-    useCases: [
-      "Web development",
-      "Frontend frameworks",
-      "Backend development (Node.js)",
-      "Mobile app development",
-    ],
-  },
-  {
-    id: "html",
-    name: "HTML",
-    description: "The markup language for creating web pages and web applications",
-    introduction:
-      "HTML (HyperText Markup Language) is the standard markup language for creating web pages. It defines the structure and content of web pages using elements and tags.",
-    useCases: [
-      "Web page structure",
-      "Web applications",
-      "Email templates",
-      "Documentation",
-    ],
-  },
-  {
-    id: "css",
-    name: "CSS",
-    description: "The styling language for designing and formatting web pages",
-    introduction:
-      "CSS (Cascading Style Sheets) is used to style and format HTML elements. It controls the appearance, layout, and design of web pages, making them visually appealing and responsive.",
-    useCases: [
-      "Web page styling",
-      "Responsive design",
-      "Animations",
-      "Theme customization",
-    ],
-  },
-  {
-    id: "sql",
-    name: "SQL",
-    description: "The standard language for managing and querying relational databases",
-    introduction:
-      "SQL (Structured Query Language) is used to communicate with databases. It allows you to create, read, update, and delete data in relational database management systems.",
-    useCases: [
-      "Database management",
-      "Data analysis",
-      "Backend development",
-      "Business intelligence",
-    ],
-  },
-]
-
-/**
- * Get language by ID
- */
-export function getLanguageById(id: LanguageId): Language | undefined {
-  return languages.find((lang) => lang.id === id)
-}
-
-/**
- * Get all languages
- */
-export function getAllLanguages(): Language[] {
-  return languages
-}
-
-/**
- * Get complete language content including syntax, examples, and exercises
- */
-export function getLanguageContent(id: LanguageId): LanguageContent | null {
-  const language = getLanguageById(id)
-  if (!language) return null
-
-  return {
-    language,
-    syntaxBasics: getSyntaxBasics(id),
-    codeExamples: getCodeExamples(id),
-    practiceExercises: getPracticeExercises(id),
-  }
-}
-
-/**
- * Get syntax basics for a language
- */
-function getSyntaxBasics(id: LanguageId): SyntaxExample[] {
-  const basics: Record<LanguageId, SyntaxExample[]> = {
-    c: [
+    syntax: [
       {
         title: "Hello World",
-        description: "Print text to the console",
+        description: "Basic program structure in C",
         code: `#include <stdio.h>
 
 int main() {
@@ -205,24 +79,83 @@ int main() {
       },
       {
         title: "Variables",
-        description: "Declare and use variables",
+        description: "Declaring and using variables",
         code: `int age = 25;
 float price = 19.99;
 char grade = 'A';`,
       },
       {
         title: "Comments",
-        description: "Add comments to your code",
-        code: `// This is a single-line comment
+        description: "Adding comments to your code",
+        code: `// Single-line comment
 
-/* This is a
-   multi-line comment */`,
+/* Multi-line
+   comment */`,
       },
     ],
-    cpp: [
+    examples: [
+      {
+        title: "Basic Input/Output",
+        description: "Reading and printing user input",
+        code: `#include <stdio.h>
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    scanf("%d", &number);
+    printf("You entered: %d\\n", number);
+    return 0;
+}`,
+      },
+    ],
+    practices: [
+      {
+        id: "c-hello",
+        title: "Print Hello World",
+        description: "Complete the code to print 'Hello World'",
+        incompleteCode: `#include <stdio.h>
+
+int main() {
+    printf("___");
+    return 0;
+}`,
+        placeholder: "Hello World\\n",
+        expectedOutput: "Hello World",
+        solution: `printf("Hello World\\n");`,
+      },
+      {
+        id: "c-variable",
+        title: "Declare a Variable",
+        description: "Declare an integer variable named 'age' with value 20",
+        incompleteCode: `#include <stdio.h>
+
+int main() {
+    ___ age = 20;
+    printf("Age: %d\\n", age);
+    return 0;
+}`,
+        placeholder: "int",
+        expectedOutput: "Age: 20",
+        solution: `int age = 20;`,
+      },
+    ],
+  },
+  cpp: {
+    id: "cpp",
+    name: "C++",
+    description: "Object-oriented extension of C, used for high-performance applications",
+    introduction:
+      "C++ is an extension of C with object-oriented features. It's used for game engines, desktop applications, and performance-critical systems. C++ gives you both low-level control and high-level abstractions.",
+    useCases: [
+      "Game development",
+      "Desktop applications",
+      "High-performance computing",
+      "System software",
+    ],
+    syntax: [
       {
         title: "Hello World",
-        description: "Print text to the console",
+        description: "Basic program using iostream",
         code: `#include <iostream>
 using namespace std;
 
@@ -233,44 +166,135 @@ int main() {
       },
       {
         title: "Variables",
-        description: "Declare and use variables",
-        code: `int number = 42;
-string name = "John";
-double pi = 3.14159;`,
+        description: "C++ variable declarations",
+        code: `int number = 10;
+double price = 29.99;
+string name = "John";`,
       },
       {
         title: "Comments",
-        description: "Add comments to your code",
+        description: "Comment syntax in C++",
         code: `// Single-line comment
 
 /* Multi-line
    comment */`,
       },
     ],
-    python: [
+    examples: [
+      {
+        title: "Input/Output",
+        description: "Using cin and cout",
+        code: `#include <iostream>
+using namespace std;
+
+int main() {
+    int age;
+    cout << "Enter your age: ";
+    cin >> age;
+    cout << "You are " << age << " years old" << endl;
+    return 0;
+}`,
+      },
+    ],
+    practices: [
+      {
+        id: "cpp-hello",
+        title: "Print Hello World",
+        description: "Complete the code to print 'Hello World'",
+        incompleteCode: `#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "___" << endl;
+    return 0;
+}`,
+        placeholder: "Hello World",
+        expectedOutput: "Hello World",
+        solution: `cout << "Hello World" << endl;`,
+      },
+    ],
+  },
+  python: {
+    id: "python",
+    name: "Python",
+    description: "High-level, interpreted language known for simplicity and readability",
+    introduction:
+      "Python is a beginner-friendly language with clean, readable syntax. It's widely used in web development, data science, artificial intelligence, and automation. Python's simplicity makes it perfect for learning programming concepts.",
+    useCases: [
+      "Web development",
+      "Data science",
+      "Machine learning",
+      "Automation",
+    ],
+    syntax: [
       {
         title: "Hello World",
-        description: "Print text to the console",
+        description: "Simple print statement",
         code: `print("Hello, World!")`,
       },
       {
         title: "Variables",
-        description: "Declare and use variables",
+        description: "Python variables (no type declaration needed)",
         code: `name = "Alice"
 age = 25
 price = 19.99`,
       },
       {
         title: "Comments",
-        description: "Add comments to your code",
-        code: `# This is a comment
-name = "John"  # Inline comment`,
+        description: "Adding comments in Python",
+        code: `# This is a single-line comment
+
+# Multi-line comments
+# are done with multiple
+# hash symbols`,
       },
     ],
-    java: [
+    examples: [
+      {
+        title: "Input/Output",
+        description: "Getting user input",
+        code: `name = input("Enter your name: ")
+print(f"Hello, {name}!")`,
+      },
+    ],
+    practices: [
+      {
+        id: "python-hello",
+        title: "Print Hello World",
+        description: "Complete the code to print 'Hello World'",
+        incompleteCode: `print( ___)`,
+        placeholder: '"Hello World"',
+        expectedOutput: "Hello World",
+        solution: `print("Hello World")`,
+      },
+      {
+        id: "python-variable",
+        title: "Create a Variable",
+        description: "Create a variable named 'name' with value 'Python'",
+        incompleteCode: `___ = "Python"
+print(name)`,
+        placeholder: "name",
+        expectedOutput: "Python",
+        solution: `name = "Python"`,
+      },
+    ],
+  },
+  java: {
+    id: "java",
+    name: "Java",
+    description: "Object-oriented language, platform-independent and widely used in enterprise",
+    introduction:
+      "Java is a popular object-oriented language known for 'write once, run anywhere'. It's used in enterprise applications, Android development, and large-scale systems. Java's strong typing helps catch errors early.",
+    useCases: [
+      "Enterprise applications",
+      "Android development",
+      "Web applications",
+      "Big data processing",
+    ],
+    syntax: [
       {
         title: "Hello World",
-        description: "Print text to the console",
+        description: "Basic Java class structure",
         code: `public class HelloWorld {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
@@ -279,46 +303,133 @@ name = "John"  # Inline comment`,
       },
       {
         title: "Variables",
-        description: "Declare and use variables",
+        description: "Java variable declarations",
         code: `int age = 25;
 String name = "John";
 double price = 19.99;`,
       },
       {
         title: "Comments",
-        description: "Add comments to your code",
+        description: "Comment syntax in Java",
         code: `// Single-line comment
 
 /* Multi-line
    comment */`,
       },
     ],
-    javascript: [
+    examples: [
+      {
+        title: "Input/Output",
+        description: "Using Scanner for input",
+        code: `import java.util.Scanner;
+
+public class Example {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter your name: ");
+        String name = scanner.nextLine();
+        System.out.println("Hello, " + name);
+    }
+}`,
+      },
+    ],
+    practices: [
+      {
+        id: "java-hello",
+        title: "Print Hello World",
+        description: "Complete the code to print 'Hello World'",
+        incompleteCode: `public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("___");
+    }
+}`,
+        placeholder: "Hello World",
+        expectedOutput: "Hello World",
+        solution: `System.out.println("Hello World");`,
+      },
+    ],
+  },
+  javascript: {
+    id: "javascript",
+    name: "JavaScript",
+    description: "The language of the web, used for interactive web pages",
+    introduction:
+      "JavaScript is the programming language of the web. It runs in browsers and enables interactive websites. With Node.js, JavaScript can also run on servers. It's essential for modern web development.",
+    useCases: [
+      "Web development",
+      "Frontend frameworks",
+      "Backend (Node.js)",
+      "Mobile apps (React Native)",
+    ],
+    syntax: [
       {
         title: "Hello World",
-        description: "Print text to the console",
+        description: "Console output in JavaScript",
         code: `console.log("Hello, World!");`,
       },
       {
         title: "Variables",
-        description: "Declare and use variables",
+        description: "Variable declarations (let, const, var)",
         code: `let name = "Alice";
 const age = 25;
 var price = 19.99;`,
       },
       {
         title: "Comments",
-        description: "Add comments to your code",
+        description: "Comment syntax in JavaScript",
         code: `// Single-line comment
 
 /* Multi-line
    comment */`,
       },
     ],
-    html: [
+    examples: [
+      {
+        title: "Basic Example",
+        description: "Variables and console output",
+        code: `let name = "JavaScript";
+let version = 2024;
+console.log(name + " version " + version);`,
+      },
+    ],
+    practices: [
+      {
+        id: "js-hello",
+        title: "Print Hello World",
+        description: "Complete the code to print 'Hello World'",
+        incompleteCode: `console.log(___);`,
+        placeholder: '"Hello World"',
+        expectedOutput: "Hello World",
+        solution: `console.log("Hello World");`,
+      },
+      {
+        id: "js-variable",
+        title: "Create a Variable",
+        description: "Create a variable named 'message' with value 'Hello'",
+        incompleteCode: `let ___ = "Hello";
+console.log(message);`,
+        placeholder: "message",
+        expectedOutput: "Hello",
+        solution: `let message = "Hello";`,
+      },
+    ],
+  },
+  html: {
+    id: "html",
+    name: "HTML",
+    description: "Markup language for creating web page structure",
+    introduction:
+      "HTML (HyperText Markup Language) is the foundation of web pages. It defines the structure and content of websites. Every web page you visit is built with HTML. It's the first language every web developer learns.",
+    useCases: [
+      "Web page structure",
+      "Content organization",
+      "Form creation",
+      "Semantic markup",
+    ],
+    syntax: [
       {
         title: "Basic Structure",
-        description: "Create a basic HTML document",
+        description: "Essential HTML document structure",
         code: `<!DOCTYPE html>
 <html>
 <head>
@@ -330,313 +441,192 @@ var price = 19.99;`,
 </html>`,
       },
       {
-        title: "Headings",
-        description: "Use different heading levels",
-        code: `<h1>Main Heading</h1>
-<h2>Subheading</h2>
-<h3>Smaller Heading</h3>`,
+        title: "Common Tags",
+        description: "Frequently used HTML elements",
+        code: `<h1>Heading 1</h1>
+<p>Paragraph text</p>
+<a href="#">Link</a>
+<img src="image.jpg" alt="Image">`,
       },
       {
         title: "Comments",
-        description: "Add comments to your HTML",
+        description: "HTML comments",
         code: `<!-- This is an HTML comment -->`,
       },
     ],
-    css: [
+    examples: [
+      {
+        title: "Simple Page",
+        description: "A basic HTML page",
+        code: `<!DOCTYPE html>
+<html>
+<head>
+    <title>My First Page</title>
+</head>
+<body>
+    <h1>Welcome</h1>
+    <p>This is my first HTML page.</p>
+</body>
+</html>`,
+      },
+    ],
+    practices: [
+      {
+        id: "html-heading",
+        title: "Create a Heading",
+        description: "Complete the code to create an h1 heading with text 'Hello World'",
+        incompleteCode: `<h1>___</h1>`,
+        placeholder: "Hello World",
+        expectedOutput: "Hello World",
+        solution: `<h1>Hello World</h1>`,
+      },
+      {
+        id: "html-paragraph",
+        title: "Create a Paragraph",
+        description: "Complete the code to create a paragraph",
+        incompleteCode: `<p>___</p>`,
+        placeholder: "This is a paragraph",
+        expectedOutput: "This is a paragraph",
+        solution: `<p>This is a paragraph</p>`,
+      },
+    ],
+  },
+  css: {
+    id: "css",
+    name: "CSS",
+    description: "Stylesheet language for designing and styling web pages",
+    introduction:
+      "CSS (Cascading Style Sheets) controls how HTML elements look. It's used to add colors, fonts, layouts, and animations to web pages. CSS makes websites beautiful and user-friendly.",
+    useCases: [
+      "Web page styling",
+      "Responsive design",
+      "Animations",
+      "Layout control",
+    ],
+    syntax: [
       {
         title: "Basic Syntax",
-        description: "Style HTML elements",
-        code: `h1 {
-    color: blue;
-    font-size: 24px;
+        description: "CSS rule structure",
+        code: `selector {
+    property: value;
 }`,
       },
       {
-        title: "Selectors",
-        description: "Target different elements",
-        code: `/* Element selector */
-p { color: black; }
-
-/* Class selector */
-.my-class { color: red; }
-
-/* ID selector */
-#my-id { color: green; }`,
+        title: "Common Properties",
+        description: "Frequently used CSS properties",
+        code: `h1 {
+    color: blue;
+    font-size: 24px;
+    margin: 10px;
+}`,
       },
       {
         title: "Comments",
-        description: "Add comments to your CSS",
+        description: "CSS comments",
         code: `/* This is a CSS comment */`,
       },
     ],
-    sql: [
+    examples: [
+      {
+        title: "Styling Text",
+        description: "Basic text styling",
+        code: `p {
+    color: #333;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}`,
+      },
+    ],
+    practices: [
+      {
+        id: "css-color",
+        title: "Set Text Color",
+        description: "Complete the code to set paragraph text color to red",
+        incompleteCode: `p {
+    color: ___;
+}`,
+        placeholder: "red",
+        expectedOutput: "red",
+        solution: `p {
+    color: red;
+}`,
+      },
+    ],
+  },
+  sql: {
+    id: "sql",
+    name: "SQL",
+    description: "Structured Query Language for managing and querying databases",
+    introduction:
+      "SQL (Structured Query Language) is used to communicate with databases. It's essential for storing, retrieving, and manipulating data. SQL is used in almost every application that needs to store data.",
+    useCases: [
+      "Database queries",
+      "Data analysis",
+      "Backend development",
+      "Business intelligence",
+    ],
+    syntax: [
       {
         title: "SELECT Statement",
-        description: "Retrieve data from a table",
+        description: "Basic query to retrieve data",
         code: `SELECT * FROM users;`,
       },
       {
         title: "WHERE Clause",
-        description: "Filter data with conditions",
-        code: `SELECT name, email 
-FROM users 
+        description: "Filtering data with conditions",
+        code: `SELECT * FROM users
 WHERE age > 18;`,
       },
       {
         title: "Comments",
-        description: "Add comments to your SQL",
+        description: "SQL comments",
         code: `-- Single-line comment
 
 /* Multi-line
    comment */`,
       },
     ],
-  }
-
-  return basics[id] || []
+    examples: [
+      {
+        title: "Query Example",
+        description: "Selecting specific columns",
+        code: `SELECT name, email
+FROM users
+WHERE age >= 21;`,
+      },
+    ],
+    practices: [
+      {
+        id: "sql-select",
+        title: "Select All Records",
+        description: "Complete the code to select all records from the 'users' table",
+        incompleteCode: `SELECT * FROM ___;`,
+        placeholder: "users",
+        expectedOutput: "users",
+        solution: `SELECT * FROM users;`,
+      },
+    ],
+  },
 }
 
 /**
- * Get code examples for a language
+ * Get all available languages
  */
-function getCodeExamples(id: LanguageId): SyntaxExample[] {
-  const examples: Record<LanguageId, SyntaxExample[]> = {
-    c: [
-      {
-        title: "Input and Output",
-        description: "Get input from user and display output",
-        code: `#include <stdio.h>
-
-int main() {
-    int num;
-    printf("Enter a number: ");
-    scanf("%d", &num);
-    printf("You entered: %d\\n", num);
-    return 0;
-}`,
-      },
-    ],
-    cpp: [
-      {
-        title: "Input and Output",
-        description: "Get input from user and display output",
-        code: `#include <iostream>
-using namespace std;
-
-int main() {
-    int num;
-    cout << "Enter a number: ";
-    cin >> num;
-    cout << "You entered: " << num << endl;
-    return 0;
-}`,
-      },
-    ],
-    python: [
-      {
-        title: "Input and Output",
-        description: "Get input from user and display output",
-        code: `name = input("Enter your name: ")
-print("Hello, " + name + "!")`,
-      },
-    ],
-    java: [
-      {
-        title: "Input and Output",
-        description: "Get input from user and display output",
-        code: `import java.util.Scanner;
-
-public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter your name: ");
-        String name = scanner.nextLine();
-        System.out.println("Hello, " + name + "!");
-    }
-}`,
-      },
-    ],
-    javascript: [
-      {
-        title: "Variables and Functions",
-        description: "Create and use functions",
-        code: `function greet(name) {
-    return "Hello, " + name + "!";
-}
-
-let message = greet("Alice");
-console.log(message);`,
-      },
-    ],
-    html: [
-      {
-        title: "Links and Images",
-        description: "Create links and add images",
-        code: `<a href="https://example.com">Visit Example</a>
-
-<img src="image.jpg" alt="Description">`,
-      },
-    ],
-    css: [
-      {
-        title: "Styling Multiple Elements",
-        description: "Apply styles to multiple elements",
-        code: `body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-}
-
-.button {
-    background-color: blue;
-    color: white;
-    padding: 10px 20px;
-}`,
-      },
-    ],
-    sql: [
-      {
-        title: "INSERT Statement",
-        description: "Add new data to a table",
-        code: `INSERT INTO users (name, email, age)
-VALUES ('John Doe', 'john@example.com', 25);`,
-      },
-    ],
-  }
-
-  return examples[id] || []
+export function getAllLanguages(): Language[] {
+  return Object.values(languagesData)
 }
 
 /**
- * Get practice exercises for a language
+ * Get language by ID
  */
-function getPracticeExercises(id: LanguageId): PracticeExercise[] {
-  const exercises: Record<LanguageId, PracticeExercise[]> = {
-    c: [
-      {
-        id: "c-1",
-        title: "Print Hello World",
-        description: "Complete the code to print 'Hello, World!'",
-        incompleteCode: `#include <stdio.h>
+export function getLanguageById(id: LanguageId): Language | undefined {
+  return languagesData[id]
+}
 
-int main() {
-    printf("___");
-    return 0;
-}`,
-        placeholder: "Hello, World!",
-        expectedAnswer: "Hello, World!",
-        hint: "Use printf with the message in quotes",
-      },
-      {
-        id: "c-2",
-        title: "Declare a Variable",
-        description: "Declare an integer variable named 'age' with value 25",
-        incompleteCode: `int ___ = 25;`,
-        placeholder: "age",
-        expectedAnswer: "age",
-        hint: "Variable name should be 'age'",
-      },
-    ],
-    cpp: [
-      {
-        id: "cpp-1",
-        title: "Print Hello World",
-        description: "Complete the code to print 'Hello, World!'",
-        incompleteCode: `#include <iostream>
-using namespace std;
-
-int main() {
-    cout << "___" << endl;
-    return 0;
-}`,
-        placeholder: "Hello, World!",
-        expectedAnswer: "Hello, World!",
-        hint: "Use cout with the message in quotes",
-      },
-    ],
-    python: [
-      {
-        id: "python-1",
-        title: "Print Hello World",
-        description: "Complete the code to print 'Hello, World!'",
-        incompleteCode: `print("___")`,
-        placeholder: "Hello, World!",
-        expectedAnswer: "Hello, World!",
-        hint: "Use print() with the message in quotes",
-      },
-      {
-        id: "python-2",
-        title: "Create a Variable",
-        description: "Create a variable named 'name' with value 'Alice'",
-        incompleteCode: `___ = "Alice"`,
-        placeholder: "name",
-        expectedAnswer: "name",
-        hint: "Variable name should be 'name'",
-      },
-    ],
-    java: [
-      {
-        id: "java-1",
-        title: "Print Hello World",
-        description: "Complete the print statement",
-        incompleteCode: `public class Main {
-    public static void main(String[] args) {
-        System.out.println("___");
-    }
-}`,
-        placeholder: "Hello, World!",
-        expectedAnswer: "Hello, World!",
-        hint: "Use System.out.println with the message",
-      },
-    ],
-    javascript: [
-      {
-        id: "js-1",
-        title: "Print Hello World",
-        description: "Complete the code to print 'Hello, World!'",
-        incompleteCode: `console.log("___");`,
-        placeholder: "Hello, World!",
-        expectedAnswer: "Hello, World!",
-        hint: "Use console.log with the message in quotes",
-      },
-    ],
-    html: [
-      {
-        id: "html-1",
-        title: "Create a Heading",
-        description: "Complete the heading tag to display 'Welcome'",
-        incompleteCode: `<h1>___</h1>`,
-        placeholder: "Welcome",
-        expectedAnswer: "Welcome",
-        hint: "Add the text between the opening and closing tags",
-      },
-    ],
-    css: [
-      {
-        id: "css-1",
-        title: "Set Text Color",
-        description: "Set the color of paragraph text to blue",
-        incompleteCode: `p {
-    color: ___;
-}`,
-        placeholder: "blue",
-        expectedAnswer: "blue",
-        hint: "Use the color name 'blue'",
-      },
-    ],
-    sql: [
-      {
-        id: "sql-1",
-        title: "Select All Columns",
-        description: "Complete the SELECT statement to get all columns from users table",
-        incompleteCode: `SELECT ___ FROM users;`,
-        placeholder: "*",
-        expectedAnswer: "*",
-        hint: "Use * to select all columns",
-      },
-    ],
-  }
-
-  return exercises[id] || []
+/**
+ * Check if language ID is valid
+ */
+export function isValidLanguageId(id: string): id is LanguageId {
+  return id in languagesData
 }
 

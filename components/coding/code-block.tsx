@@ -1,23 +1,20 @@
 /**
  * Code Block Component
  * 
- * Displays code with syntax highlighting styling.
- * Uses monospaced font and proper formatting for readability.
+ * Reusable component for displaying code with proper formatting.
+ * Uses monospaced font and preserves whitespace.
  */
 
 interface CodeBlockProps {
   code: string
-  language?: string
   className?: string
 }
 
-export function CodeBlock({ code, language, className }: CodeBlockProps) {
+export function CodeBlock({ code, className = "" }: CodeBlockProps) {
   return (
-    <div className={`rounded-lg bg-muted p-4 overflow-x-auto ${className || ""}`}>
-      <pre className="font-mono text-sm">
-        <code>{code}</code>
-      </pre>
-    </div>
+    <pre className={`bg-muted p-4 rounded-md overflow-x-auto ${className}`}>
+      <code className="text-sm font-mono whitespace-pre">{code}</code>
+    </pre>
   )
 }
 

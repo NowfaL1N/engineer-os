@@ -1,20 +1,20 @@
 /**
- * Language Detail Page
+ * Coding Practice - Language Detail Page
  * 
- * Displays comprehensive information about a programming language:
- * - Introduction
- * - Syntax Basics
- * - Code Examples
- * - Practice Exercises
+ * Displays language introduction, syntax, examples, and practice exercises.
+ * Dynamic route: /coding/[language]
  */
 
-import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import Link from "next/link"
-import { getLanguageContent, type LanguageId } from "@/services/coding.service"
-import { CodeBlock } from "@/components/coding/code-block"
-import { PracticeExerciseComponent } from "@/components/coding/practice-exercise"
-import { Button } from "@/components/ui/button"
+import {
+  getLanguageById,
+  isValidLanguageId,
+  type LanguageId,
+} from "@/services/coding.service"
+import { LanguageIntroduction } from "@/components/coding/language-introduction"
+import { SyntaxSection } from "@/components/coding/syntax-section"
+import { CodeExample } from "@/components/coding/code-example"
+import { PracticeSection } from "@/components/coding/practice-section"
 
 interface LanguagePageProps {
   params: {
@@ -22,105 +22,75 @@ interface LanguagePageProps {
   }
 }
 
-/**
- * Generate metadata for language detail pages
- */
-export async function generateMetadata({
-  params,
-}: LanguagePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: LanguagePageProps) {
   const languageId = params.language as LanguageId
-  const content = getLanguageContent(languageId)
+  const language = getLanguageById(languageId)
 
-  if (!content) {
+  if (!language) {
     return {
       title: "Language Not Found",
     }
   }
 
   return {
-    title: `${content.language.name} Practice | Coding Practice`,
-    description: `Learn ${content.language.name} programming with syntax basics, examples, and interactive practice exercises.`,
+    title: `${language.name} - Coding Practice`,
+    description: language.description,
   }
 }
 
 export default function LanguageDetailPage({ params }: LanguagePageProps) {
   const languageId = params.language as LanguageId
-  const content = getLanguageContent(languageId)
 
-  if (!content) {
+  if (!isValidLanguageId(languageId)) {
     notFound()
   }
 
-  const { language, syntaxBasics, codeExamples, practiceExercises } = content
+  const language = getLanguageById(languageId)
+
+  if (!language) {
+    notFound()
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
       {/* Header */}
       <div className="mb-8">
-        <Link href="/coding">
-          <Button variant="ghost" className="mb-4">
-            ← Back to Languages
-          </Button>
-        </Link>
-        <h1 className="text-4xl font-bold mb-4">{language.name}</h1>
+        <h1 className="text-4xl font-bold mb-2">{language.name}</h1>
+        <p className="text-muted-foreground text-lg">{language.description}</p>
       </div>
 
       {/* Introduction Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Introduction</h2>
-        <div className="prose prose-slate dark:prose-invert max-w-none">
-          <p className="text-lg mb-4">{language.introduction}</p>
-          <div>
-            <h3 className="text-xl font-semibold mb-2">Common Use Cases:</h3>
-            <ul className="list-disc list-inside space-y-1">
-              {language.useCases.map((useCase, index) => (
-                <li key={index}>{useCase}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
+      <LanguageIntroduction
+        introduction={language.introduction}
+        useCases={language.useCases}
+      />
 
       {/* Syntax Basics Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Basic Syntax</h2>
-        <div className="space-y-6">
-          {syntaxBasics.map((syntax, index) => (
-            <div key={index}>
-              <h3 className="text-xl font-medium mb-2">{syntax.title}</h3>
-              <p className="text-muted-foreground mb-3">{syntax.description}</p>
-              <CodeBlock code={syntax.code} />
-            </div>
+      <section className="mt-12">
+        <h2 className="text-3xl font-semibold mb-6">Basic Syntax</h2>
+        <div className="space-y-8">
+          {language.syntax.map((syntax, index) => (
+            <SyntaxSection key={index} {...syntax} />
           ))}
         </div>
       </section>
 
       {/* Code Examples Section */}
-      {codeExamples.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Code Examples</h2>
-          <div className="space-y-6">
-            {codeExamples.map((example, index) => (
-              <div key={index}>
-                <h3 className="text-xl font-medium mb-2">{example.title}</h3>
-                <p className="text-muted-foreground mb-3">{example.description}</p>
-                <CodeBlock code={example.code} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      <section className="mt-12">
+        <h2 className="text-3xl font-semibold mb-6">Code Examples</h2>
+        <div className="space-y-8">
+          {language.examples.map((example, index) => (
+            <CodeExample key={index} {...example} />
+          ))}
+        </div>
+      </section>
 
       {/* Practice Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Practice Exercises</h2>
-        <p className="text-muted-foreground mb-6">
-          Complete the incomplete code by filling in the blanks. Click "Check Answer" to
-          validate your solution.
-        </p>
+      <section className="mt-12">
+        <h2 className="text-3xl font-semibold mb-6">Practice Exercises</h2>
         <div className="space-y-8">
-          {practiceExercises.map((exercise) => (
-            <PracticeExerciseComponent key={exercise.id} exercise={exercise} />
+          {language.practices.map((practice) => (
+            <PracticeSection key={practice.id} {...practice} />
           ))}
         </div>
       </section>
