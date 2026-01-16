@@ -22,3 +22,42 @@ model User {
   // Example: posts Post[]
 }
 
+
+// Roadmap System Models
+
+model Roadmap {
+  id          String           @id @default(cuid())
+  slug        String           @unique
+  title       String
+  description String
+  difficulty  String // Beginner, Intermediate, Advanced
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  sections    RoadmapSection[]
+}
+
+model RoadmapSection {
+  id        String        @id @default(cuid())
+  title     String
+  order     Int
+  roadmapId String
+  roadmap   Roadmap       @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  steps     RoadmapStep[]
+
+  @@index([roadmapId])
+}
+
+model RoadmapStep {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  concepts    String[] // Stored as array of strings
+  resources   Json? // Stored as JSON to be flexible
+  order       Int
+  sectionId   String
+  section     RoadmapSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([sectionId])
+}
