@@ -10,6 +10,7 @@ import { fundamentalsList } from "@/data/coding/fundamentals"
 import { pythonTopics } from "@/data/coding/python"
 import { javascriptTopics } from "@/data/coding/javascript"
 import { javaTopics } from "@/data/coding/java"
+import { getCTopics } from "./coding/c-data-adapter"
 
 // Language metadata (basic info)
 const languagesMetadata: Record<LanguageId, Omit<Language, "fundamentals">> = {
@@ -84,7 +85,7 @@ const topicsData: Record<LanguageId, Record<string, Topic> | null> = {
   python: pythonTopics,
   javascript: javascriptTopics,
   java: javaTopics,
-  c: null, // TODO: Add C topics
+  c: getCTopics(), // C topics from adapter
   cpp: null, // TODO: Add C++ topics
   html: null,
   css: null,
@@ -123,8 +124,10 @@ export function isValidLanguageId(id: string): id is LanguageId {
 
 /**
  * Get topic for a language
+ * For C language, accepts any string topic ID
+ * For other languages, uses TopicId type
  */
-export function getTopic(languageId: LanguageId, topicId: TopicId): Topic | undefined {
+export function getTopic(languageId: LanguageId, topicId: TopicId | string): Topic | undefined {
   const topics = topicsData[languageId]
   if (!topics) return undefined
 

@@ -47,9 +47,14 @@ export async function generateMetadata({ params }: TopicPageProps) {
 
 export default function TopicDetailPage({ params }: TopicPageProps) {
   const languageId = params.language as LanguageId
-  const topicId = params.topic as TopicId
+  const topicId = params.topic as string // Allow string for C topics
 
-  if (!isValidLanguageId(languageId) || !isValidTopicId(topicId, languageId)) {
+  if (!isValidLanguageId(languageId)) {
+    notFound()
+  }
+
+  // For C language, accept any topic ID. For others, validate against TopicId
+  if (languageId !== "c" && !isValidTopicId(topicId, languageId)) {
     notFound()
   }
 

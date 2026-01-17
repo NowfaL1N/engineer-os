@@ -65,16 +65,28 @@ export default function LanguageDetailPage({ params }: LanguagePageProps) {
       />
 
 
-      {/* Fundamentals Link */}
+      {/* Navigation Links */}
       <section className="mt-12">
-        <div className="border rounded-lg p-8 bg-card text-center">
-          <h2 className="text-3xl font-semibold mb-4">Ready to Learn?</h2>
-          <p className="text-muted-foreground mb-6">
-            Explore comprehensive fundamentals with interactive practice questions
-          </p>
-          <Link href={`/coding/${languageId}/fundamentals`}>
-            <Button size="lg">View All Fundamentals</Button>
-          </Link>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {languageId === "c" ? (
+            <Link href="/coding/c">
+              <div className="border rounded-lg p-6 bg-card text-center hover:border-primary hover:shadow-md transition-all cursor-pointer">
+                <h3 className="text-xl font-semibold mb-2">C Tutorial</h3>
+                <p className="text-muted-foreground text-sm">
+                  Complete C programming tutorial with all topics
+                </p>
+              </div>
+            </Link>
+          ) : (
+            <Link href={`/coding/${languageId}/fundamentals`}>
+              <div className="border rounded-lg p-6 bg-card text-center hover:border-primary hover:shadow-md transition-all cursor-pointer">
+                <h3 className="text-xl font-semibold mb-2">Fundamentals</h3>
+                <p className="text-muted-foreground text-sm">
+                  Explore comprehensive fundamentals with interactive practice questions
+                </p>
+              </div>
+            </Link>
+          )}
         </div>
       </section>
     </div>
