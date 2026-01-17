@@ -12,9 +12,8 @@ import {
   type LanguageId,
 } from "@/services/coding.service"
 import { LanguageIntroduction } from "@/components/coding/language-introduction"
-import { SyntaxSection } from "@/components/coding/syntax-section"
-import { CodeExample } from "@/components/coding/code-example"
-import { PracticeSection } from "@/components/coding/practice-section"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 interface LanguagePageProps {
   params: {
@@ -65,33 +64,17 @@ export default function LanguageDetailPage({ params }: LanguagePageProps) {
         useCases={language.useCases}
       />
 
-      {/* Syntax Basics Section */}
-      <section className="mt-12">
-        <h2 className="text-3xl font-semibold mb-6">Basic Syntax</h2>
-        <div className="space-y-8">
-          {language.syntax.map((syntax, index) => (
-            <SyntaxSection key={index} {...syntax} />
-          ))}
-        </div>
-      </section>
 
-      {/* Code Examples Section */}
+      {/* Fundamentals Link */}
       <section className="mt-12">
-        <h2 className="text-3xl font-semibold mb-6">Code Examples</h2>
-        <div className="space-y-8">
-          {language.examples.map((example, index) => (
-            <CodeExample key={index} {...example} />
-          ))}
-        </div>
-      </section>
-
-      {/* Practice Section */}
-      <section className="mt-12">
-        <h2 className="text-3xl font-semibold mb-6">Practice Exercises</h2>
-        <div className="space-y-8">
-          {language.practices.map((practice) => (
-            <PracticeSection key={practice.id} {...practice} />
-          ))}
+        <div className="border rounded-lg p-8 bg-card text-center">
+          <h2 className="text-3xl font-semibold mb-4">Ready to Learn?</h2>
+          <p className="text-muted-foreground mb-6">
+            Explore comprehensive fundamentals with interactive practice questions
+          </p>
+          <Link href={`/coding/${languageId}/fundamentals`}>
+            <Button size="lg">View All Fundamentals</Button>
+          </Link>
         </div>
       </section>
     </div>
