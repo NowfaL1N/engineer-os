@@ -1695,7 +1695,7 @@ print(f"You are {age} years old")
 
 # Get float input
 price = float(input("Enter price: "))
-print(f"Price: ${price:.2f}")
+print(f"Price: \${price:.2f}")
 
 # Multiple inputs
 first_name = input("First name: ")
@@ -2091,7 +2091,7 @@ print(c.radius)`,
         return "Insufficient funds"
     
     def display_balance(self):
-        return f"Balance: ${self.balance}"
+        return f"Balance: \${self.balance}"
 
 account = BankAccount(100)
 account.deposit(50)
