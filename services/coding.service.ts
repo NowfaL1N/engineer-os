@@ -7,10 +7,10 @@
 
 import type { Language, LanguageId, Topic, TopicId } from "./coding/types"
 import { fundamentalsList } from "@/data/coding/fundamentals"
-import { javascriptTopics } from "@/data/coding/javascript"
-import { javaTopics } from "@/data/coding/java"
 import { getCTopics } from "./coding/c-data-adapter"
 import { getPythonTopics } from "./coding/python-data-adapter"
+import { getJavaTopics } from "./coding/java-data-adapter"
+import { getJavaScriptTopics } from "./coding/javascript-data-adapter"
 
 // Language metadata (basic info)
 const languagesMetadata: Record<LanguageId, Omit<Language, "fundamentals">> = {
@@ -83,8 +83,8 @@ const languagesMetadata: Record<LanguageId, Omit<Language, "fundamentals">> = {
 // Topic data mapping
 const topicsData: Record<LanguageId, Record<string, Topic> | null> = {
   python: getPythonTopics(), // Python topics from adapter
-  javascript: javascriptTopics,
-  java: javaTopics,
+  javascript: getJavaScriptTopics(), // JavaScript topics from adapter
+  java: getJavaTopics(), // Java topics from adapter
   c: getCTopics(), // C topics from adapter
   cpp: null, // TODO: Add C++ topics
   html: null,
@@ -147,14 +147,14 @@ export function getTopicsForLanguage(languageId: LanguageId): Topic[] {
 /**
  * Check if topic ID is valid
  * 
- * For C and Python languages, accepts any topic ID since they have many specific topics
+ * For C, Python, and Java languages, accepts any topic ID since they have many specific topics
  * not in the standard fundamentals list.
  * For other languages, checks against fundamentals list.
  */
 export function isValidTopicId(id: string, languageId?: LanguageId): boolean {
-  // C and Python languages have many specific topics not in fundamentals list
-  if (languageId === "c" || languageId === "python") {
-    return true // Accept any topic ID for C and Python
+  // C, Python, Java, and JavaScript languages have many specific topics not in fundamentals list
+  if (languageId === "c" || languageId === "python" || languageId === "java" || languageId === "javascript") {
+    return true // Accept any topic ID for C, Python, Java, and JavaScript
   }
   // For other languages, check against fundamentals list
   return fundamentalsList.some((f) => f.id === id)

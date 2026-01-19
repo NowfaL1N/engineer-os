@@ -86,6 +86,15 @@ export default function LanguageDetailPage({ params }: LanguagePageProps) {
                 </p>
               </div>
             </Link>
+          ) : languageId === "java" ? (
+            <Link href="/coding/java">
+              <div className="border rounded-lg p-6 bg-card text-center hover:border-primary hover:shadow-md transition-all cursor-pointer">
+                <h3 className="text-xl font-semibold mb-2">Java Tutorial</h3>
+                <p className="text-muted-foreground text-sm">
+                  Complete Java programming tutorial with all topics
+                </p>
+              </div>
+            </Link>
           ) : (
             <Link href={`/coding/${languageId}/fundamentals`}>
               <div className="border rounded-lg p-6 bg-card text-center hover:border-primary hover:shadow-md transition-all cursor-pointer">
