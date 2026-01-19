@@ -11,6 +11,7 @@ import { getCTopics } from "./coding/c-data-adapter"
 import { getPythonTopics } from "./coding/python-data-adapter"
 import { getJavaTopics } from "./coding/java-data-adapter"
 import { getJavaScriptTopics } from "./coding/javascript-data-adapter"
+import { getCppTopics } from "./coding/cpp-data-adapter"
 
 // Language metadata (basic info)
 const languagesMetadata: Record<LanguageId, Omit<Language, "fundamentals">> = {
@@ -86,7 +87,7 @@ const topicsData: Record<LanguageId, Record<string, Topic> | null> = {
   javascript: getJavaScriptTopics(), // JavaScript topics from adapter
   java: getJavaTopics(), // Java topics from adapter
   c: getCTopics(), // C topics from adapter
-  cpp: null, // TODO: Add C++ topics
+  cpp: getCppTopics(), // C++ topics from adapter
   html: null,
   css: null,
   sql: null,
@@ -152,9 +153,9 @@ export function getTopicsForLanguage(languageId: LanguageId): Topic[] {
  * For other languages, checks against fundamentals list.
  */
 export function isValidTopicId(id: string, languageId?: LanguageId): boolean {
-  // C, Python, Java, and JavaScript languages have many specific topics not in fundamentals list
-  if (languageId === "c" || languageId === "python" || languageId === "java" || languageId === "javascript") {
-    return true // Accept any topic ID for C, Python, Java, and JavaScript
+  // C, Python, Java, JavaScript, and C++ languages have many specific topics not in fundamentals list
+  if (languageId === "c" || languageId === "python" || languageId === "java" || languageId === "javascript" || languageId === "cpp") {
+    return true // Accept any topic ID for C, Python, Java, JavaScript, and C++
   }
   // For other languages, check against fundamentals list
   return fundamentalsList.some((f) => f.id === id)

@@ -95,6 +95,24 @@ export default function LanguageDetailPage({ params }: LanguagePageProps) {
                 </p>
               </div>
             </Link>
+          ) : languageId === "javascript" ? (
+            <Link href="/coding/javascript">
+              <div className="border rounded-lg p-6 bg-card text-center hover:border-primary hover:shadow-md transition-all cursor-pointer">
+                <h3 className="text-xl font-semibold mb-2">JavaScript Tutorial</h3>
+                <p className="text-muted-foreground text-sm">
+                  Complete JavaScript programming tutorial with all topics
+                </p>
+              </div>
+            </Link>
+          ) : languageId === "cpp" ? (
+            <Link href="/coding/cpp">
+              <div className="border rounded-lg p-6 bg-card text-center hover:border-primary hover:shadow-md transition-all cursor-pointer">
+                <h3 className="text-xl font-semibold mb-2">C++ Tutorial</h3>
+                <p className="text-muted-foreground text-sm">
+                  Complete C++ programming tutorial with all topics
+                </p>
+              </div>
+            </Link>
           ) : (
             <Link href={`/coding/${languageId}/fundamentals`}>
               <div className="border rounded-lg p-6 bg-card text-center hover:border-primary hover:shadow-md transition-all cursor-pointer">
