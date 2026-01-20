@@ -13,13 +13,34 @@ engineering-platform/
 │   └── page.tsx                  # Landing page (minimal)
 │
 ├── components/                   # React components
+│   ├── coding/                   # Coding practice components
+│   │   ├── code-block.tsx        # Code display component
+│   │   └── practice-section.tsx  # Practice exercise component
 │   └── ui/                       # ShadCN UI components
 │       └── button.tsx            # Button component (example)
 │
+├── data/                         # Static data files
+│   └── coding/                   # Language tutorial data
+│       ├── c.ts                  # C language topics
+│       ├── python.ts             # Python language topics
+│       ├── css.ts                # CSS language topics (130 topics)
+│       ├── java.ts               # Java language topics
+│       ├── javascript.ts         # JavaScript language topics
+│       ├── html.ts               # HTML language topics
+│       ├── cpp.ts                # C++ language topics
+│       └── fundamentals.ts       # Common programming fundamentals
+│
 ├── services/                     # Business logic layer
-│   └── auth/                     # Authentication service
-│       ├── index.ts              # Auth service exports
-│       └── types.ts              # Auth types & interfaces
+│   ├── auth/                     # Authentication service
+│   │   ├── index.ts              # Auth service exports
+│   │   └── types.ts              # Auth types & interfaces
+│   └── coding/                   # Coding practice service
+│       ├── coding.service.ts     # Main service for language data
+│       ├── types.ts              # Coding practice types
+│       ├── c-data-adapter.ts      # C data adapter
+│       ├── python-data-adapter.ts # Python data adapter
+│       ├── css-data-adapter.ts    # CSS data adapter
+│       └── [language]-data-adapter.ts # Other language adapters
 │
 ├── db/                           # Database utilities
 │   ├── client.ts                 # Prisma client singleton
@@ -67,7 +88,7 @@ engineering-platform/
 
 ### 1. Domain-Driven Folder Structure
 - **Why**: Clear separation of concerns, scales well for large teams
-- **How**: Root-level folders for each domain (db, ai, rss, docs)
+- **How**: Root-level folders for each domain (db, ai, rss, coding, docs)
 - **Benefit**: Easy to locate code, clear ownership, independent evolution
 
 ### 2. Service Layer Pattern
@@ -136,6 +157,14 @@ Response
 - Scheduled updates
 - **Status**: Placeholder (not implemented)
 
+### Coding Practice Service (`services/coding/`)
+- Language data management
+- Topic retrieval and organization
+- Practice question handling
+- Data adapters for language-specific formats
+- **Status**: Implemented with 8 languages (C, C++, Python, Java, JavaScript, HTML, CSS, SQL)
+- **Languages**: 130 CSS topics, comprehensive coverage for all supported languages
+
 ### Auth Service (`services/auth/`)
 - User authentication
 - Session management
@@ -147,11 +176,19 @@ Response
 ### Adding a New Feature
 
 1. **Create service** in `services/feature-name/` (if business logic)
-2. **Add domain folder** in root (if domain-specific, like `ai/`, `rss/`)
+2. **Add domain folder** in root (if domain-specific, like `ai/`, `rss/`, `data/`)
 3. **Add API routes** in `app/api/feature-name/`
 4. **Create components** in `components/features/feature-name/` (if needed)
 5. **Add routes** in `app/(feature-name)/` (if needed)
 6. **Update schema** in `prisma/schema.prisma` (if needed)
+
+### Adding a New Language to Coding Practice
+
+1. **Create data file** in `data/coding/[language].ts` with language topics
+2. **Create adapter** in `services/coding/[language]-data-adapter.ts`
+3. **Update service** in `services/coding.service.ts` to import and register the adapter
+4. **Update types** if needed in `services/coding/types.ts`
+5. **Add language metadata** in `services/coding.service.ts` languagesMetadata
 
 ### Adding a New UI Component
 

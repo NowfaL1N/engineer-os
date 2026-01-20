@@ -20,15 +20,21 @@ This project follows a **domain-driven folder structure** with clear separation 
 ```
 ├── app/                    # Next.js App Router (pages, layouts, API routes)
 │   ├── api/               # API route handlers
+│   ├── coding/            # Coding practice pages
 │   ├── globals.css        # Global styles
 │   ├── layout.tsx         # Root layout
 │   └── page.tsx           # Landing page
 │
 ├── components/            # React components
+│   ├── coding/            # Coding practice components
 │   └── ui/                # ShadCN UI components (reusable)
 │
+├── data/                  # Static data files
+│   └── coding/            # Language tutorial data (C, Python, CSS, etc.)
+│
 ├── services/              # Business logic services
-│   └── auth/              # Authentication service (placeholder)
+│   ├── auth/              # Authentication service (placeholder)
+│   └── coding/            # Coding practice service & adapters
 │
 ├── db/                    # Database utilities
 │   ├── client.ts          # Prisma client singleton
@@ -63,7 +69,7 @@ This project follows a **domain-driven folder structure** with clear separation 
    - Domain Logic: AI and RSS in dedicated folders
 
 2. **Domain-Driven Structure**
-   - Each domain (AI, RSS, DB) has its own folder
+   - Each domain (AI, RSS, DB, Coding) has its own folder
    - Clear boundaries between domains
    - Easy to locate and maintain code
 
@@ -270,6 +276,82 @@ git push origin feature/user-dashboard
 - [ ] All linting errors resolved
 - [ ] Build succeeds locally
 - [ ] Tests pass (when tests are added)
+
+## 💻 Coding Practice Feature
+
+The platform includes a comprehensive coding practice system that supports multiple programming languages with interactive tutorials, examples, and practice questions.
+
+### Supported Languages
+
+- **C** - System programming fundamentals
+- **C++** - Object-oriented programming
+- **Python** - High-level programming
+- **Java** - Enterprise and Android development
+- **JavaScript** - Web development
+- **HTML** - Web page structure
+- **CSS** - Web styling and design
+- **SQL** - Database queries (coming soon)
+
+### Structure
+
+The coding practice system is organized as follows:
+
+```
+data/coding/              # Language data files
+├── c.ts                 # C language topics
+├── cpp.ts               # C++ language topics
+├── python.ts            # Python language topics
+├── java.ts              # Java language topics
+├── javascript.ts        # JavaScript language topics
+├── html.ts              # HTML language topics
+├── css.ts               # CSS language topics (130 topics)
+└── fundamentals.ts       # Common programming fundamentals
+
+services/coding/          # Service layer
+├── coding.service.ts    # Main service for accessing language data
+├── types.ts             # TypeScript type definitions
+├── c-data-adapter.ts     # C data adapter
+├── python-data-adapter.ts # Python data adapter
+├── css-data-adapter.ts  # CSS data adapter
+└── [language]-data-adapter.ts # Other language adapters
+```
+
+### CSS Tutorial
+
+The CSS tutorial is comprehensive with **130 topics** organized across 8 categories:
+
+1. **CSS Basics** (47 topics) - Introduction, syntax, selectors, colors, layouts, etc.
+2. **CSS Advanced** (29 topics) - Transforms, animations, gradients, shadows, etc.
+3. **CSS Flexbox** (4 topics) - Flex container, items, responsive layouts
+4. **CSS Grid** (5 topics) - Grid layouts, 12-column systems
+5. **CSS Responsive** (8 topics) - Responsive design, media queries, viewport
+6. **CSS Preprocessors** (1 topic) - SASS/SCSS
+7. **CSS Examples & Practice** (12 topics) - Templates, exercises, quizzes
+8. **CSS References** (16 topics) - Complete reference guides
+
+Each topic includes:
+- **Explanation** - What the concept is and why it's important
+- **Syntax** - How to write the code
+- **Examples** - Working code examples
+- **Practice Questions** - Interactive exercises (fill-in-the-blank, predict output, etc.)
+
+### Usage
+
+Access coding practice topics via the service:
+
+```typescript
+import { getTopic, getTopicsForLanguage } from "@/services/coding.service"
+
+// Get a specific topic
+const topic = getTopic("css", "css-intro")
+
+// Get all topics for a language
+const cssTopics = getTopicsForLanguage("css")
+```
+
+### Data Adapters
+
+Each language has a data adapter that converts the language-specific data structure to the standard `Topic` interface used by the UI. This ensures consistent presentation across all languages.
 
 ## 📚 Documentation
 
